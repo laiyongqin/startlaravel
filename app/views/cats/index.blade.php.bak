@@ -10,7 +10,8 @@ Add a new cat
 </a>
 </h2>
 @stop
-
+Chapter 3
+[43 ]
 @section('content')
 @foreach($cats as $cat)
 <div class="cat">
