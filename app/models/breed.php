@@ -1,7 +1,7 @@
 <?php
 class Breed extends Eloquent {
 public $timestamps = false;
-public function cats(){
+public function cat(){
 return $this->hasMany('Cat');
 }
 }
