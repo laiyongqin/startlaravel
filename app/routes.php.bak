@@ -34,7 +34,8 @@ return View::make('cats.index')
 });
 Route::get('cats/breeds/{name}', function($name){
 $breed = Breed::whereName($name)->with('cats')->first();
+dd($breed);
 return View::make('cats.index')
 ->with('breed', $breed)
-->with('cats', $breed->Cat);
+->with('cats', $breed->cats);
 });
