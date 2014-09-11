@@ -17,7 +17,7 @@ Route::get('/', function()
 });
 
  Route::get('/', function(){
-            return "All cats";
+            return Redirect::to("cats");
  });
 // Route::get('cats/{id}', function($id){
 //			return "Cat #$id";
@@ -33,18 +33,21 @@ return View::make('cats.index')
 ->with('cats', $cats);
 });
 Route::get('cats/breeds/{name}', function($name){
+//   echo $name;
 $breed = Breed::whereName($name)->with('cat')->first();
-dd($breed);
+//$juti=$breed->cat->items;
+// dd($juti[0]->fillable());
+//dd($breed->cat);
 return View::make('cats.index')
 ->with('breed', $breed)
-->with('cats', $breed->cats);
+->with('cats', $breed->cat);
 });
-
-Route::get('cats/{id}', function($id) {
-$cat = Cat::find($id);
+Route::model('cat', 'Cat');
+Route::get('cats/{cat}', function(Cat $cat) {
+//$cat = Cat::find($id);
 return View::make('cats.single')
 ->with('cat', $cat);
-});
+})->where('id', '[0-9]+');
 
 Route::get('cats/create', function() {
 $cat = new Cat;
@@ -54,11 +57,13 @@ return View::make('cats.edit')
 });
 
 Route::get('cats/{cat}/edit', function(Cat $cat) {
+//$cat=Cat::find($id);
 return View::make('cats.edit')
 ->with('cat', $cat)
 ->with('method', 'put');
 });
 Route::get('cats/{cat}/delete', function(Cat $cat) {
+//$cat=Cat::find($id);
 return View::make('cats.edit')
 ->with('cat', $cat)
 ->with('method', 'delete');
