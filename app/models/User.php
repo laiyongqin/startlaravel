@@ -5,14 +5,6 @@ use Illuminate\Auth\UserInterface;
 use Illuminate\Auth\Reminders\RemindableTrait;
 use Illuminate\Auth\Reminders\RemindableInterface;
 
-/**
- * User
- *
- */
-/**
- * User
- *
- */
 class User extends Eloquent implements UserInterface, RemindableInterface {
 
 	use UserTrait, RemindableTrait;
@@ -23,12 +15,28 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	 * @var string
 	 */
 	protected $table = 'users';
-
+protected $fillable =array('username','password','is_admin','remember_token');
 	/**
 	 * The attributes excluded from the model's JSON form.
 	 *
 	 * @var array
 	 */
 	protected $hidden = array('password', 'remember_token');
+public function getAuthIdentifier() {
+return $this->getKey();
+}
+public function getAuthPassword() {
+return $this->password;
+}
+public function cats(){
+return $this->hasMany('Cat');
+}
+public function owns(Cat $cat){
+return $this->id == $cat->owner;
+}
+public function canEdit(Cat $cat){
+return $this->is_admin or $this->owns($cat);
+}
 
 }
+?>

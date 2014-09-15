@@ -11,10 +11,10 @@
 |
 */
 
-Route::get('/', function()
-{
-	return View::make('hello');
-});
+//Route::get('/', function()
+//{
+//	return View::make('hello');
+//});
 
  Route::get('/', function(){
             return Redirect::to("cats");
@@ -69,15 +69,37 @@ return View::make('cats.edit')
 ->with('method', 'delete');
 });
 
+//Route::post('cats', function(){
+//$cat = Cat::create(Input::all());
+//return Redirect::to('cats/' . $cat->id)
+//->with('message', 'Successfully created page!');
+//});
 Route::post('cats', function(){
 $cat = Cat::create(Input::all());
+$cat->user_id = Auth::user()->id;
+if($cat->save()){
 return Redirect::to('cats/' . $cat->id)
-->with('message', 'Successfully created page!');
+->with('message', 'Successfully created profile!');
+} else {
+return Redirect::back()
+->with('error', 'Could not create profile');
+}
 });
+//Route::put('cats/{cat}', function(Cat $cat) {
+//$cat->update(Input::all());
+//return Redirect::to('cats/' . $cat->id)
+//->with('message', 'Successfully updated page!');
+//});
+
 Route::put('cats/{cat}', function(Cat $cat) {
+if(Auth::user()->canEdit($cat)){
 $cat->update(Input::all());
 return Redirect::to('cats/' . $cat->id)
-->with('message', 'Successfully updated page!');
+->with('message', 'Successfully updated profile!');
+} else {
+return Redirect::to('cats/' . $cat->id)
+->with('error', "Unauthorized operation");
+}
 });
 Route::delete('cats/{cat}', function(Cat $cat) {
 $cat->delete();
@@ -97,3 +119,26 @@ $breed_options = array(null, 'Unspecified');
 }
 $view->with('breed_options', $breed_options);
 });
+
+
+Route::get('login', function(){
+return View::make('login');
+});
+
+
+Route::post('login', function(){
+if(Auth::attempt(Input::only('username', 'password'))) {
+return Redirect::intended('/');
+} else {
+return Redirect::back()
+->withInput()
+->with('error', "Invalid credentials");
+}
+});
+
+Route::get('logout', function(){
+Auth::logout();
+return Redirect::to('/')
+->with('message', 'You are now logged out');
+});
+
