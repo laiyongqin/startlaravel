@@ -32,7 +32,7 @@ public function cats(){
 return $this->hasMany('Cat');
 }
 public function owns(Cat $cat){
-return $this->id == $cat->owner;
+return $this->id == $cat->user_id;
 }
 public function canEdit(Cat $cat){
 return $this->is_admin or $this->owns($cat);

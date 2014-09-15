@@ -43,12 +43,14 @@ Route::get('cats/breeds/{name}', function($name) {
                     ->with('cats', $breed->cat);
 });
 Route::model('cat', 'Cat');
+
 Route::get('cats/{cat}', function(Cat $cat) {
 //$cat = Cat::find($id);
     return View::make('cats.single')
                     ->with('cat', $cat);
-})->where('id', '[0-9]+');
+})->where('cat', '[0-9]+');
 
+Route::group(array('before'=>'auth'), function(){
 Route::get('cats/create', function() {
     $cat = new Cat;
     return View::make('cats.edit')
@@ -68,7 +70,7 @@ Route::get('cats/{cat}/delete', function(Cat $cat) {
                     ->with('cat', $cat)
                     ->with('method', 'delete');
 });
-
+});
 //Route::post('cats', function(){
 //$cat = Cat::create(Input::all());
 //return Redirect::to('cats/' . $cat->id)
