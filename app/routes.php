@@ -47,7 +47,7 @@ Route::get('cats/{cat}', function(Cat $cat) {
 //$cat = Cat::find($id);
 return View::make('cats.single')
 ->with('cat', $cat);
-})->where('id', '[0-9]+');
+})->where('cat', '[0-9]+');
 
 Route::get('cats/create', function() {
 $cat = new Cat;
