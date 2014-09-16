@@ -52,10 +52,33 @@ Route::get('cats/{cat}', function(Cat $cat) {
 
 Route::group(array('before'=>'auth'), function(){
 Route::get('cats/create', function() {
+    $zongprint="";
+if(Session::has('message')){
+    $messageobj=Session::get('message');
+    $message=$messageobj->getMessages();
+//dd($message);
+ 
+foreach ($message as $key => $messageone){
+//echo $key;
+//echo "  : ";
+    
+  foreach ($messageone as $messageonevalue)
+  {   $printstring="<script type=".'"'."text/javascript".'"'.">var userobj=document.getElementById(".'"'.$key.'"'.");userobj.innerHTML="."'".$messageonevalue."'".";</script>";
+      $zongprint=$zongprint.$printstring;
+  // dd($printstring);  
+    //echo $printstring;
+      //echo $messageonevalue;
+  }
+echo "<br>";
+
+}
+
+}
     $cat = new Cat;
     return View::make('cats.edit')
                     ->with('cat', $cat)
-                    ->with('method', 'post');
+                    ->with('method', 'post')
+                    ->with('jsprinterror',$zongprint);
 });
 
 Route::get('cats/{cat}/edit', function(Cat $cat) {
@@ -77,7 +100,22 @@ Route::get('cats/{cat}/delete', function(Cat $cat) {
 //->with('message', 'Successfully created page!');
 //});
 Route::post('cats', function() {
-    $cat = Cat::create(Input::all());
+    
+    $rules = array(
+        'name' => 'required|min:3', // Required, > 3 characters
+        'date_of_birth' => array('required', 'date') // Must be a date
+    );
+    $formresult=Input::all();
+    
+    $validation_result = Validator::make($formresult,$rules);
+    
+    if($validation_result->fails()){
+        return Redirect::back()->with('message', $validation_result->messages());
+        //$message = $validation_result->messages();
+        //return Redirect::back()->with('message',$message);
+    }else{
+    
+    $cat = Cat::create($formresult);
     $cat->user_id = Auth::user()->id;
     if ($cat->save()) {
         return Redirect::to('cats/' . $cat->id)
@@ -85,6 +123,7 @@ Route::post('cats', function() {
     } else {
         return Redirect::back()
                         ->with('error', 'Could not create profile');
+    }
     }
 });
 //Route::put('cats/{cat}', function(Cat $cat) {
